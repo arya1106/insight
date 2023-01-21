@@ -52,21 +52,16 @@ def report():
         with conn.cursor() as curr:    
             curr.execute("select * from osmp_schema.damage_nodes")
             res = len(curr.fetchall()) + 1            
-            # crack_type = 1 if request.headers.get("cracktype") == "horizontal crack" else 2
-            #latitude = float(request.headers.get("latitude"))
-           # longitude = float(request.headers.get("longitude"))
-           # image_str = request.form.get('image')
-           # print(res, crack_type, latitude, longitude)
-            #print(request.get_data()) 
-            #new_img_str = decode(image_str, "utf-8")
-            request.files.get("imageUploads").save("test.jpeg")
-
-            # testing decoding of image string
-           # with open("imageToSave.jpeg", "wb") as fh:
-            #    fh.write(base64.decodebytes(new_img_str))
-
-            # curr.execute(f"insert into osmp_schema.damage_nodes values ({res}, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326), {crack_type}, '{image_str}', 2)")
+            crack_type = 1 if request.headers.get("cracktype") == "horizontal crack" else 2
+            latitude = float(request.headers.get("latitude"))
+            longitude = float(request.headers.get("longitude"))
+            content = request.files.get("imageUploads").read()
+            print(type(content))
+            cmd = "insert into osmp_schema.damage_nodes values (%d, ST_SetSRID(ST_MakePoint(%15.10f, %15.10f), 4326), %d, 2, %s)" % (res, longitude, latitude, crack_type, content)
+            curr.execute(cmd)
+            # print(cmd)
             conn.commit()
+
 
 
     return "hi"
