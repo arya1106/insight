@@ -147,10 +147,20 @@ class IncidentViewController: UIViewController, UIImagePickerControllerDelegate 
             }
             if let data = data, let dataString = String(data: data, encoding: .utf8) {
                 print("Response data string:\n \(dataString)")
+                
             }
         }
         task.resume()
-
+        var dialogMessage = UIAlertController(title: "Damage Recorded", message: "Your damage report has been recorded!", preferredStyle: .alert)
+        
+        // Create OK button with action handler
+        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+            self.dismiss(animated: true, completion: nil)
+        })
+        
+        dialogMessage.addAction(ok)
+        self.present(dialogMessage, animated: true, completion: nil)
+       
         
     }
     
