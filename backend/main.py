@@ -59,13 +59,15 @@ def report():
             print(type(content))
             cmd = "insert into osmp_schema.damage_nodes values (%d, ST_SetSRID(ST_MakePoint(%15.10f, %15.10f), 4326), %d, 2, %s)" % (res, longitude, latitude, crack_type, content)
             curr.execute(cmd)
-            # print(cmd)
             conn.commit()
-
-
-
     return "hi"
 
+@app.route('/query', methods = ["GET", "POST"])
+def query():
+    if request.method == "POST":
+        print(request)
+        print(request.data)
+        print(request.json)
 
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", debug=True)

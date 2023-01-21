@@ -138,7 +138,7 @@ function submitLocation() {
         "radius": radius
     }
 
-    fetch('138.197.104.208/query', {
+    fetch('138.197.104.208:5000/query', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
