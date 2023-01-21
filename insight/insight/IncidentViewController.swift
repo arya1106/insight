@@ -122,20 +122,37 @@ class IncidentViewController: UIViewController, UIImagePickerControllerDelegate 
         
     }
     
+    @IBAction func submitReport(_ sender: UIButton) {
+        let url = URL(string: "http://138.197.104.208:5000/report")
+        guard let requestUrl = url else { fatalError() }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
+        var request = URLRequest(url: requestUrl)
+        request.httpMethod = "POST"
     
-    func getAddress(fromLocation location: CLLocation) {
+        let imageData: Data = (selectedImageView.image?.pngData())!;
+        let imageString = String(imageData.base64EncodedString(options: .lineLength64Characters))
+        let paramString = "image=\(imageString)"
+        let paramData = paramString.data(using: .utf8) ?? Data()
+
+        request.httpBody = paramData
+        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+        request.setValue("\((locationManager.location?.coordinate.latitude)!)", forHTTPHeaderField: "latitude")
+        request.setValue("\((locationManager.location?.coordinate.longitude)!)", forHTTPHeaderField: "longitude")
+        request.setValue("\((crackType.titleLabel?.text)!)", forHTTPHeaderField: "cracktype")
+
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print("Error took place \(error)")
+                return
+            }
+            if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                print("Response data string:\n \(dataString)")
+            }
+        }
+        task.resume()
+
         
-
     }
-
+    
+        
 }
