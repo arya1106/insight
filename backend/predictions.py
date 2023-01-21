@@ -1,15 +1,13 @@
 from ultralytics import YOLO
-import sys
-import json
 
 CLASS_MAPPINGS={0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "pothole"}
 
-def predict():
+def predict(imageSource):
     model = YOLO("../ML/train4/weights/best.pt")
     outList = []
 
-    results = model.predict(source=sys.argv[1], save=True)
-    print(sys.argv[1])
+    results = model.predict(source=imageSource, save=True)
+    print(imageSource)
     if results:    
         boxCords = results[0].boxes.xyxy
         classes = results[0].boxes.cls
@@ -20,9 +18,8 @@ def predict():
             out["damageType"] = classes[index].item()
             outList.append(out)
 
-    outDict = {"damages": outList}
-    jsonString = json.dumps(outDict)
-    print(jsonString)
+    return outList
 
 if __name__ == "__main__":
     predict()
+
