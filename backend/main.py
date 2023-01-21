@@ -2,18 +2,24 @@ from flask import Flask, request, jsonify
 import os
 import psycopg2
 
-conn = psycopg2.connect(os.environ["DATABASE_URL"])
+conn = psycopg2.connect(os.environ["DATABASE_URL"], dbname="OSMP")
 
 app = Flask(__name__)
 
 @app.route('/report', methods = ["GET", "POST"])
 def report():
     if request.method == "POST":
-        print(request.headers)
-        print(request.form)
-        print(request.data)
-        with conn.cursor() as curr:
-            curr.execute("")
+        with conn.cursor() as curr:    
+            curr.execute("select * from osmp_schema.damage_nodes")
+            res = len(curr.fetchall()) + 1            
+            crack_type = 1 if request.headers.get("cracktype") == "horizontal crack" else 2
+            latitude = float(request.headers.get("latitude"))
+            longitude = float(request.headers.get("longitude"))
+            image_str = request.form.get('image')
+            print(res, crack_type, latitude, longitude)
+            curr.execute(f"insert into osmp_schema.damage_nodes values ({res}, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326), {crack_type}, '{image_str}', 2)")
+            conn.commit()
+
 
     return "hi"
 
