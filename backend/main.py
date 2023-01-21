@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify
 import os
 import psycopg2
+import base64
+from codecs import encode
 
 conn = psycopg2.connect(os.environ["DATABASE_URL"], dbname="OSMP")
 
@@ -17,7 +19,14 @@ def report():
             longitude = float(request.headers.get("longitude"))
             image_str = request.form.get('image')
             print(res, crack_type, latitude, longitude)
-            curr.execute(f"insert into osmp_schema.damage_nodes values ({res}, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326), {crack_type}, '{image_str}', 2)")
+            
+            new_img_str = encode(image_str, "utf-8")
+
+            # testing decoding of image string
+            with open("imageToSave.jpeg", "wb") as fh:
+                fh.write(base64.decodebytes(new_img_str))
+
+            # curr.execute(f"insert into osmp_schema.damage_nodes values ({res}, ST_SetSRID(ST_MakePoint({longitude}, {latitude}), 4326), {crack_type}, '{image_str}', 2)")
             conn.commit()
 
 
