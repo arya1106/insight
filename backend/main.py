@@ -1,4 +1,8 @@
 from flask import Flask, request, jsonify
+import os
+import psycopg2
+
+conn = psycopg2.connect(os.environ["DATABASE_URL"])
 
 app = Flask(__name__)
 
@@ -6,7 +10,11 @@ app = Flask(__name__)
 def report():
     if request.method == "POST":
         print(request.headers)
-    
+        print(request.form)
+        print(request.data)
+        with conn.cursor() as curr:
+            curr.execute("")
+
     return "hi"
 
 
