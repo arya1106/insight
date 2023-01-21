@@ -25,8 +25,11 @@
       <!-- Responsive-->
       <link rel="stylesheet" href="css/responsive.css">
 
+
       <!-- fevicon -->
+      <!-- ADD I LOGO HERE-->
       <link rel="icon" href="images/insight_favicon.png" type="image/gif" />
+
 
       <!-- Scrollbar Custom CSS -->
       <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
@@ -78,7 +81,7 @@
                         </div>
                      </nav> -->
                      <div>
-                        <a class="page_button" href="index.html">Home</a>
+                        <a class="page_button" href="analyzeview.html">Analyze View</a>
                      </div>
                   </div>
                </div>
@@ -86,38 +89,16 @@
          </div>
       </header>
       <!-- end header -->
-      
-
+      <!-- start map -->
       <div class="map_holder">
-         <!-- start input -->
-         <div class="analyze_submit_holder">
-            <div class="analyze_center">
-               <div class="col-md-12">
-                  <textarea id="addressBox" class="analyze_input" placeholder="Click on the map to select a point" type="text" readonly></textarea>
-               </div>
-               <div class="col-md-12">
-                  <input id="radius" class="analyze_input" placeholder="Enter radius around the point (meters)" type="number" 
-                     onchange 
-                     onpropertychange 
-                     onkeyuponpaste oninput="adjustRadius()"> 
-               </div>
-               <div class="analyze_button_holder">
-                  <a class="analyze_button" onclick="submitLocation()" href="">Submit Area</a>
-               </div>
-            </div>
-         </div>
-         <!-- end input -->
-         <!-- start map -->
-         <div class="analyze_map">
-            <div id="map"></div>
-            <script src="js/map.js"></script>
-            <!-- <iframe class="analyze_map" frameborder="0" scrolling="no" src="https://www.openstreetmap.org/export/embed.html?bbox=-122.15148495593243%2C37.36149124489094%2C-122.02642964282207%2C37.41911514903418&amp;layer=mapnik"></iframe> -->
-         </div>
-         <!-- end map -->
+         <div id="map"></div>
+         <script src="js/map.js"></script>
+         <!-- <iframe frameborder="0" scrolling="no" src="https://www.openstreetmap.org/export/embed.html?bbox=-122.15148495593243%2C37.36149124489094%2C-122.02642964282207%2C37.41911514903418&amp;layer=mapnik"></iframe> -->
       </div>
       <!-- end map -->
 
-      
+      <!-- ADD A FILTER BAR (to filter through incidents)? -->
+
    </body>
 </html>
 

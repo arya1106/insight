@@ -145,6 +145,10 @@ body {
      overflow: hidden;
 }
 
+#radius:placeholder-shown {
+     color: #ffffff;
+     transition: ease-in all 0.2s;
+}
 
 .analyze_input:not(placeholder-shown) {
      transition: ease-in all 0.2s;

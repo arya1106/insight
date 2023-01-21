@@ -23,6 +23,37 @@ map.on('click', function(e){
 });
 
 
+marker.on('mouseover', function(e){
+    var popup = e.target.getPopup();
+    popup.setContent("<div><p>hello bitch</p></div>");
+    popup.openPopup();
+});
+
+
+function createMarkers() {
+    //TEST ARRAY BELOW
+    var markers = [
+        [ -0.1244324, 51.5006728, "Big Ben" ],
+        [ -0.119623, 51.503308, "London Eye" ],
+        [ -0.1279688, 51.5077286, "Nelson's Column<br><a href=\"https://en.wikipedia.org/wiki/Nelson's_Column\">wp</a>" ] 
+     ];
+     
+     //Loop through the markers array
+     for (var i = 0; i < markers.length; i++) {
+       
+        var lon = markers[i][0];
+        var lat = markers[i][1];
+        var popupText = markers[i][2];
+        
+         var markerLocation = new L.LatLng(lat, lon);
+         var newmarker = new L.Marker(markerLocation);
+         map.addLayer(newmarker);
+     
+         newmarker.bindPopup(popupText);
+     
+     }
+}
+
 //geocode address from click
 function getAddress(e) {
     
@@ -107,7 +138,7 @@ function submitLocation() {
         "radius": radius
     }
 
-    fetch('https://reqbin.com/echo/post/json', {
+    fetch('138.197.104.208/query', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
