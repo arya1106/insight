@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS, cross_origin
 import os
 import psycopg2
 import base64
@@ -12,6 +13,7 @@ CLASS_MAPPINGS={0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "poth
 conn = psycopg2.connect(os.environ["DATABASE_URL"], dbname="OSMP")
 
 app = Flask(__name__)
+CORS(app, resources={r"*": {"origins": "*"}})
 
 def predict(imageSource):
     model = YOLO("../ML/train4/weights/best.pt")
@@ -63,11 +65,17 @@ def report():
     return "hi"
 
 @app.route('/query', methods = ["GET", "POST"])
+@cross_origin()
 def query():
     if request.method == "POST":
         print(request)
         print(request.data)
         print(request.json)
+    return "hi"
+
+@app.route('/')
+def home():
+    return app.send_static_file("../index.html")
 
 if __name__ == "__main__":
     app.run(host= "0.0.0.0", debug=True)
