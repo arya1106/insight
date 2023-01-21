@@ -9,7 +9,7 @@ import UIKit
 import CoreLocation
 
 
-class IncidentViewController: UIViewController {
+class IncidentViewController: UIViewController, UIImagePickerControllerDelegate & UINavigationControllerDelegate {
 
     @IBOutlet var submitReport: UIButton!
     @IBOutlet var locationLabel: UILabel!
@@ -35,6 +35,44 @@ class IncidentViewController: UIViewController {
             crackType.setTitleColor(UIColor(red: CGFloat(255)/255.0, green: CGFloat(189)/255.0, blue: CGFloat(90)/255.0, alpha: 1), for: .normal)
             crackType.setTitle("horizontal crack", for: .normal)
         }
+    }
+    
+    @IBAction func addImage(_ sender: UIButton) {
+        let ac = UIAlertController(title: "Add image", message: "Please attach an image that depicts the road damage properly", preferredStyle: .actionSheet)
+        let cameraButton = UIAlertAction(title: "Take photo", style: .default) {[weak self] (_) in
+            self?.showImagePicker(selectedSource: .camera)
+        }
+        let libraryButton = UIAlertAction(title: "Choose from library", style: .default) {[weak self] (_) in
+            self?.showImagePicker(selectedSource: .photoLibrary)
+        }
+        let cancelButton = UIAlertAction(title: "Cancel", style: .cancel)
+        ac.addAction(cameraButton)
+        ac.addAction(libraryButton)
+        ac.addAction(cancelButton)
+        self.present(ac, animated: true, completion: nil)
+    }
+    
+    func showImagePicker(selectedSource: UIImagePickerController.SourceType) {
+        guard UIImagePickerController.isSourceTypeAvailable(selectedSource) else {
+            print("source not available asdkjfadsf")
+            return
+        }
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.delegate = self
+        imagePickerController.sourceType = selectedSource
+        imagePickerController.allowsEditing = false
+        self.present(imagePickerController, animated: true, completion: nil)
+        
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            selectedImageView.image = selectedImage
+            noImageLabel.isHidden = true
+        } else {
+            print("grrr no image")
+        }
+        picker.dismiss(animated: true, completion: nil)
     }
     
     let locationManager = CLLocationManager();
