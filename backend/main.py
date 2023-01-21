@@ -4,11 +4,32 @@ import psycopg2
 import base64
 from codecs import encode, decode
 import json
+from ultralytics import YOLO
 import requests
+
+CLASS_MAPPINGS={0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "pothole"}
 
 conn = psycopg2.connect(os.environ["DATABASE_URL"], dbname="OSMP")
 
 app = Flask(__name__)
+
+def predict(imageSource):
+    model = YOLO("../ML/train4/weights/best.pt")
+    outList = []
+
+    results = model.predict(source=imageSource, save=True)
+    print(imageSource)
+    if results:    
+        boxCords = results[0].boxes.xyxy
+        classes = results[0].boxes.cls
+
+        for index, element in enumerate(boxCords):
+            out = {}
+            out["boxCords"] = boxCords[index].tolist()
+            out["damageType"] = classes[index].item()
+            outList.append(out)
+
+    return outList
 
 def getStreetImages(point, radius):
     lat = point[0]
@@ -19,8 +40,10 @@ def getStreetImages(point, radius):
 
     outList = []
     for i in jsonDict['result']['data']:
-        outList.append(i["fileurlLTh"])
-        
+        data = {}
+        data["imageURL"] = i["fileurlLTh"]
+        data["location"] = [i["lat"], i["lng"]]
+
     return outList
 
 @app.route('/report', methods = ["GET", "POST"])
