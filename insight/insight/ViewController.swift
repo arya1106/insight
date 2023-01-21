@@ -8,6 +8,7 @@
 import UIKit
 import CoreLocation
 
+
 class ViewController: UIViewController {
     
     @IBOutlet var reportIncident: UIButton!
@@ -17,6 +18,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         locationManager.requestWhenInUseAuthorization()
+
         // Do any additional setup after loading the view.
         view.backgroundColor = UIColor(red: CGFloat(27)/255.0, green: CGFloat(26)/255.0, blue: CGFloat(26)/255.0, alpha: 1)
         
