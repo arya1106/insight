@@ -123,45 +123,73 @@ class IncidentViewController: UIViewController, UIImagePickerControllerDelegate 
     }
     
     @IBAction func submitReport(_ sender: UIButton) {
-        let url = URL(string: "http://138.197.104.208:5000/report")
-        guard let requestUrl = url else { fatalError() }
+        if selectedImageView.image == nil {
+            var dialogMessage = UIAlertController(title: "No image attached", message: "Please attach an image!", preferredStyle: .alert)
 
-        var request = URLRequest(url: requestUrl)
-        request.httpMethod = "POST"
-    
-        let imageData: Data = (selectedImageView.image?.pngData())!;
-        let imageString = String(imageData.base64EncodedString(options: .lineLength64Characters))
-        let paramString = "image=\(imageString)"
-        let paramData = paramString.data(using: .utf8) ?? Data()
 
-        request.httpBody = paramData
-        request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.setValue("\((locationManager.location?.coordinate.latitude)!)", forHTTPHeaderField: "latitude")
-        request.setValue("\((locationManager.location?.coordinate.longitude)!)", forHTTPHeaderField: "longitude")
-        request.setValue("\((crackType.titleLabel?.text)!)", forHTTPHeaderField: "cracktype")
-
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
-            if let error = error {
-                print("Error took place \(error)")
-                return
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                print("pressed ok")
+            })
+            
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
+        } else {
+            let url = URL(string: "http://138.197.104.208:5000/report")
+            let boundary: String = "Boundary-\(UUID().uuidString)"
+            guard let requestUrl = url else { fatalError() }
+            
+            var request = URLRequest(url: requestUrl)
+            request.httpMethod = "POST"
+            
+            request.setValue("\((locationManager.location?.coordinate.latitude)!)", forHTTPHeaderField: "latitude")
+            request.setValue("\((locationManager.location?.coordinate.longitude)!)", forHTTPHeaderField: "longitude")
+            request.setValue("\((crackType.titleLabel?.text)!)", forHTTPHeaderField: "cracktype")
+            request.httpMethod = "POST"
+            request.httpBody = multipartFormDataBody(boundary, "sarhtak", selectedImageView.image!)
+            request.setValue("multipart/form-data; boundary=" + boundary, forHTTPHeaderField: "Content-Type")
+            
+            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+                if let error = error {
+                    print("Error took place \(error)")
+                    return
+                }
+                if let data = data, let dataString = String(data: data, encoding: .utf8) {
+                    print("Response data string:\n \(dataString)")
+                    
+                }
             }
-            if let data = data, let dataString = String(data: data, encoding: .utf8) {
-                print("Response data string:\n \(dataString)")
-                
-            }
+            task.resume()
+            var dialogMessage = UIAlertController(title: "Damage Recorded", message: "Your damage report has been recorded!", preferredStyle: .alert)
+            
+            // Create OK button with action handler
+            let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+                self.dismiss(animated: true, completion: nil)
+            })
+            
+            dialogMessage.addAction(ok)
+            self.present(dialogMessage, animated: true, completion: nil)
         }
-        task.resume()
-        var dialogMessage = UIAlertController(title: "Damage Recorded", message: "Your damage report has been recorded!", preferredStyle: .alert)
+    }
+    
+    private func multipartFormDataBody(_ boundary: String, _ fromName: String, _ image: UIImage) -> Data {
+            
+        let lineBreak = "\r\n"
+        var body = Data()
+            
+        body.append(Data("--\(boundary + lineBreak)".utf8))
+        body.append(Data("Content-Disposition: form-data; name=\"fromName\"\(lineBreak + lineBreak)".utf8))
+        body.append(Data("\(fromName + lineBreak)".utf8))
         
-        // Create OK button with action handler
-        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
-            self.dismiss(animated: true, completion: nil)
-        })
+        if let uuid = UUID().uuidString.components(separatedBy: "-").first {
+            body.append(Data("--\(boundary + lineBreak)".utf8))
+            body.append(Data("Content-Disposition: form-data; name=\"imageUploads\"; filename=\"\(uuid).jpg\"\(lineBreak)".utf8))
+            body.append(Data("Content-Type: image/jpeg\(lineBreak + lineBreak)".utf8))
+            body.append(image.jpegData(compressionQuality: 0.99)!)
+            body.append(Data(lineBreak.utf8))
+        }
         
-        dialogMessage.addAction(ok)
-        self.present(dialogMessage, animated: true, completion: nil)
-       
-        
+        body.append(Data("--\(boundary)--\(lineBreak)".utf8))
+        return body
     }
     
         
