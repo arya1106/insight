@@ -122,30 +122,44 @@ body {
      transition: ease-in all 0.2s;
 }
 
-.analyze_input {
+#addressBox {
+     padding-bottom: 100px;
+     box-sizing: content-box;
+     resize: none;
+     display: table-cell;
+     vertical-align: middle;
+}
+
+.analyze_input:placeholder-shown {
+     transition: ease-in all 0.2s;
      border-bottom: #ffffff solid 1px;
      margin-bottom: 20px;
      width: 100%;
      height: 57px;
      background: transparent;
-     color: #ffffff;
      font-size: 18px;
      font-weight: normal;
      border-top: inherit;
      border-left: inherit;
      border-right: inherit;
-     transition: ease-in all 0.2s;
      overflow: hidden;
 }
 
 
-
-.analyze_input:focus {
+.analyze_input:not(placeholder-shown) {
+     transition: ease-in all 0.2s;
      color: #ffbd59;
      border-bottom: #ffbd59 solid 1px;
-     transition: ease-in all 0.2s;
      width: 102.5%;
+     height: 57px;
      font-size: 19px;
+     background: transparent;
+     border-top: none;
+     border-left: none;
+     border-right: none;
+     overflow: hidden;
+     margin-bottom: 20px;
+     font-weight: normal;
 }
 
 a {

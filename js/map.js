@@ -75,13 +75,9 @@ function getAddress(e) {
     request.send();  // make the request
 }
 
-
-
-
-// map.on('moveend', function() { 
-//     console.log("LatLng: "+map.getBounds().toBBoxString() + "\nZoom: " + map.getZoom());
-// });
-
+map.on('moveend', function() { 
+    console.log("LatLng: "+map.getBounds().toBBoxString() + "\nZoom: " + map.getZoom());
+});
 
 
 //adjust radius
@@ -101,7 +97,6 @@ function adjustRadius() {
         }).addTo(map);
     }
 }
-
 
 
 // submit Location
