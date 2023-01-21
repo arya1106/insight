@@ -68,9 +68,15 @@ def report():
 @cross_origin()
 def query():
     if request.method == "POST":
-        print(request)
-        print(request.data)
-        print(request.json)
+        jsonDict = request.json()
+        point = jsonDict["point"]
+        radius = jsonDict["radius"]
+        streetImages = getStreetImages(point, radius)
+        predictions = []
+        for image in streetImages:
+            predictions.append(predict(imageSource=image["imageURL"]))
+        
+        
     return "hi"
 
 @app.route('/')
