@@ -8,7 +8,7 @@ def predict():
     model = YOLO("../ML/train4/weights/best.pt")
     outList = []
 
-    results = model.predict(source=sys.argv[1])
+    results = model.predict(source=sys.argv[1], save=True)
     print(sys.argv[1])
     if results:    
         boxCords = results[0].boxes.xyxy
