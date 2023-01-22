@@ -3,7 +3,7 @@ var longitude = 0;
 var latitude = 0;
 
 //init map
-var map = L.map('map').setView([37.3861, -122.0839], 14);
+var map = L.map('map').setView([40.4259, -86.9081], 14);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -129,9 +129,18 @@ function adjustRadius() {
     }
 }
 
+function markerOnclick(marker, url) {
+    var popup = marker.target.getPopup();
+    popup.setContent(`
+    <div>
+        <p>hello bitch</p>
+        <img src='${url}' width='100' height='100'>
+    </div>
+    `);
+    marker.target.bindPopup(popup).openPopup();
+}
 
 // submit Location
-
 function submitLocation() {
     var outJson = {
         "location": [latitude, longitude],
@@ -145,7 +154,43 @@ function submitLocation() {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(outJson)
-    }).then(response => response.json()).then(response =>
-        
-    );
+    }).then(response => response.json()).then(response => {
+        for(var i = 0; i < response["markers"].length; i++) {
+            (function () {
+                var lat = response["markers"][i]["location"][0];
+                var lon = response["markers"][i]["location"][1];
+                var imageString = response["markers"][i]["image"];
+                
+                var markerLocation = new L.LatLng(lat, lon);
+                var newmarker = new L.marker(markerLocation).bindPopup('');
+                newmarker.on('mouseover', function(e) {
+                    
+                    var binaryImg = atob(imageString);
+                    var length = binaryImg.length;
+                    var ab = new ArrayBuffer(length);
+                    var ua = new Uint8Array(ab);
+                    for (var j = 0; j < length; j++) {
+                        ua[j] = binaryImg.charCodeAt(j);
+                    }
+                    var blob = new Blob([ab], {
+                        type: "image/jpeg"
+                    });
+                    const url = URL.createObjectURL(blob)
+                    
+                    var popup = e.target.getPopup();
+                    popup.setContent(`
+                    <div>
+                        <p>hello bitch</p>
+                        <img src='${url}' width='100' height='100'>
+                    </div>
+                    `);
+                    e.target.bindPopup(popup).openPopup();
+                });
+                newmarker.on('mouseout', function(e) {
+                    e.target.closePopup();
+                });
+                map.addLayer(newmarker);
+            }());
+        }
+    });
 }
