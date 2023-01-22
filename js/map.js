@@ -23,35 +23,35 @@ map.on('click', function(e){
 });
 
 
-marker.on('mouseover', function(e){
-    var popup = e.target.getPopup();
-    popup.setContent("<div><p>hello bitch</p></div>");
-    popup.openPopup();
-});
-
+//TEST ARRAY BELOW
+var markers = [
+    [ 37.3861, -122.0739, "Big Ben" ],
+    [ 37.3838, -122.0835, "London Eye" ],
+    [ 37.3859, -122.0942, "Nelson's Column<br><a href=\"https://en.wikipedia.org/wiki/Nelson's_Column\">wp</a>" ] 
+ ];
 
 function createMarkers() {
-    //TEST ARRAY BELOW
-    var markers = [
-        [ -0.1244324, 51.5006728, "Big Ben" ],
-        [ -0.119623, 51.503308, "London Eye" ],
-        [ -0.1279688, 51.5077286, "Nelson's Column<br><a href=\"https://en.wikipedia.org/wiki/Nelson's_Column\">wp</a>" ] 
-     ];
-     
-     //Loop through the markers array
-     for (var i = 0; i < markers.length; i++) {
+    //Loop through the markers array
+    for (var i = 0; i < markers.length; i++) {
+      
+       var lat = markers[i][0];
+       var lon = markers[i][1];
+       var popupText = markers[i][2];
        
-        var lon = markers[i][0];
-        var lat = markers[i][1];
-        var popupText = markers[i][2];
-        
-         var markerLocation = new L.LatLng(lat, lon);
-         var newmarker = new L.Marker(markerLocation);
-         map.addLayer(newmarker);
-     
-         newmarker.bindPopup(popupText);
-     
-     }
+       var markerLocation = new L.LatLng(lat, lon);
+       var newmarker = new L.marker(markerLocation).bindPopup('');
+       map.addLayer(newmarker);
+    
+       newmarker.on('mouseover', function(e) {
+           var popup = e.target.getPopup();
+           popup.setContent("<div><p>hello bitch</p><img src='images/insight_logo.png' width='100' height='100'></div>");
+           e.target.bindPopup(popup).openPopup();
+       });
+
+       newmarker.on('mouseout', function(e) {
+           e.target.closePopup();
+       });
+    }
 }
 
 //geocode address from click
@@ -106,9 +106,9 @@ function getAddress(e) {
     request.send();  // make the request
 }
 
-map.on('moveend', function() { 
-    console.log("LatLng: "+map.getBounds().toBBoxString() + "\nZoom: " + map.getZoom());
-});
+// map.on('moveend', function() { 
+//     console.log("LatLng: "+map.getBounds().toBBoxString() + "\nZoom: " + map.getZoom());
+// });
 
 
 //adjust radius
@@ -138,15 +138,14 @@ function submitLocation() {
         "radius": radius
     }
 
-    fetch('138.197.104.208:5000/query', {
+    fetch('http://138.197.104.208:5000/query', {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(outJson)
-    }).then(function(response) {
-        console.log(response)
-        return response.json();
-    });
+    }).then(response => response.json()).then(response =>
+        
+    );
 }

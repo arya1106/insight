@@ -122,6 +122,12 @@ body {
      transition: ease-in all 0.2s;
 }
 
+/* .analyze_button:active {
+     background: #CE9948;
+     color: #fff;
+     transition: ease-in all 0.2s;
+} */
+
 #addressBox {
      padding-bottom: 100px;
      box-sizing: content-box;
