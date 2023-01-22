@@ -12,3 +12,5 @@ On our website, users can select a region and see all the labeled & reported cra
 
 Insight has the potential to make a significant impact on road safety, and we are excited to continue developing and improving our technology.
 
+[![Demo Video](https://img.youtube.com/vi/zqdhXTJrVrk/0.jpg)](https://youtu.be/zqdhXTJrVrk)
+
