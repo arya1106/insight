@@ -69,6 +69,7 @@ class IncidentViewController: UIViewController, UIImagePickerControllerDelegate 
         if let selectedImage = info[.originalImage] as? UIImage {
             selectedImageView.image = selectedImage
             noImageLabel.isHidden = true
+            selectedImageView.backgroundColor = UIColor.clear
         } else {
             print("grrr no image")
         }
