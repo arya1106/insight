@@ -136,6 +136,20 @@ function submitLocation() {
                 var lon = response["markers"][i]["location"][1];
                 var damageType = response["markers"][i]["damageType"];
                 var imageString = response["markers"][i]["image"];
+                var dataSource = response["markers"][i]["dataSource"];
+
+                // 1 = predicted, 2 = reported
+                var dataSourceString = "";
+                switch(dataSource) {
+                    case 1:
+                        dataSourceString = "Predicted";
+                        break;
+                    case 2:
+                        dataSourceString = "Reported";
+                        break;
+                    default:
+                        dataSourceString = dataSource;
+                }
 
                 //{0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "pothole"}
                 var damageTypeString = "";
@@ -175,6 +189,8 @@ function submitLocation() {
                     var popup = e.target.getPopup();
                     popup.setContent(`
                     <div class='popup-div'>
+                        <p class="popup-label-1">${dataSourceString}</p>
+                        <br>
                         <p class="popup-label">${damageTypeString}</p>
                         <img src='${url}'>
                     </div>
@@ -186,13 +202,16 @@ function submitLocation() {
                 });
                 //map.addLayer(newmarker);
                 markergroup.addLayer(newmarker);
-                // if (response["markers"][i]["dataSource"] == 1) {
-                //     newmarker._icon.style.filter = "hue-rotate(270deg)";
-                // }
+                //if (response["markers"][i]["dataSource"] == 1) {
+                //  markergroup.getAllChildMarkers()[i]._icon.style.filter = "hue-rotate(270deg)";
+                //}
             }());
         }
         map.addLayer(markergroup);
+        for (var i = 0; i < response["markers"].length; i++) {
+            if (response["markers"][i]["dataSource"] == 1) {
+                markergroup.getLayers()[i]._icon.style.filter = "hue-rotate(270deg)";
+            }
+        }
     });
-
-
 }
