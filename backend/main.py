@@ -24,7 +24,7 @@ def predict(imageSource):
 
     results = model.predict(source=imageSource, verbose=False)
     print(imageSource)
-    if results:    
+    if len(results) > 0 and len(results[0].boxes.xyxy) > 0:    
         boxCords = results[0].boxes.xyxy
         classes = results[0].boxes.cls
 
