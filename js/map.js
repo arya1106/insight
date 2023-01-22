@@ -158,10 +158,10 @@ function submitLocation() {
                         damageTypeString = "Longitudinal Crack";
                         break;
                     case 1:
-                        damageTypeString = "Transverse Crack";
+                        damageTypeString = "Longitudinal Crack";
                         break;
                     case 2:
-                        damageTypeString = "Alligator Crack";
+                        damageTypeString = "Transverse Crack";
                         break;
                     case 3:
                         damageTypeString = "Pothole";
@@ -189,8 +189,7 @@ function submitLocation() {
                     var popup = e.target.getPopup();
                     popup.setContent(`
                     <div class='popup-div'>
-                        <p class="popup-label-1">${dataSourceString}</p>
-                        <br>
+                        <p class="popup-label-1">${dataSourceString} - </p>
                         <p class="popup-label">${damageTypeString}</p>
                         <img src='${url}'>
                     </div>
