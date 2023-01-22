@@ -1,8 +1,7 @@
 # Insight
 
-<p align="center">
 [![Demo Video](https://img.youtube.com/vi/zqdhXTJrVrk/0.jpg)](https://youtu.be/zqdhXTJrVrk)
-</p>
+
 
 **Every time you stumble across a small crack in the road, that’s the beginning of something very dangerous.** They develop into potholes, causing damage to vehicles and fatal car accidents. It often takes years to fix these defects, leading to even more traffic, pollution, and new cracks forming. It's important to address these issues early to prevent a downward spiral. In fact, research has shown that approximately 1/3rd of traffic accidents involve poor road conditions. This, is what we aim to solve.
 
