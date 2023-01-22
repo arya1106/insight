@@ -7,6 +7,9 @@ from codecs import encode, decode
 import json
 from ultralytics import YOLO
 import requests
+import cv2
+import urllib.request
+import numpy as np
 
 CLASS_MAPPINGS={0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "pothole"}
 
@@ -17,21 +20,35 @@ CORS(app, resources={r"*": {"origins": "*"}})
 
 def predict(imageSource):
     model = YOLO("../ML/train4/weights/best.pt")
-    outList = []
+    outDict = {}
 
-    results = model.predict(source=imageSource, save=True, verbose=False)
+    results = model.predict(source=imageSource, verbose=False)
     print(imageSource)
     if results:    
         boxCords = results[0].boxes.xyxy
         classes = results[0].boxes.cls
 
+        url_response = urllib.request.urlopen(imageSource)
+        img = cv2.imdecode(np.array(bytearray(url_response.read()), dtype=np.uint8), -1)
+        imgAnnotated = img.copy()
+
         for index, element in enumerate(boxCords):
             out = {}
             out["boxCords"] = boxCords[index].tolist()
             out["damageType"] = classes[index].item()
-            outList.append(out)
-
-    return outList
+            x1 = boxCords[index][0]
+            y1 = boxCords[index][1]
+            x2 = boxCords[index][2]
+            y2 = boxCords[index][3]
+            imgAnnotated = cv2.rectangle(imgAnnotated, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
+            imgAnnotated = cv2.putText(imgAnnotated, CLASS_MAPPINGS[int(classes[index].item())], (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,0), 2)
+        
+        imgBytes = cv2.imencode('.jpg', imgAnnotated)[1].tobytes()
+        encodedImg = base64.b64encode(imgBytes)
+        asciiImg = encodedImg.decode('ascii')
+        outDict["image"] = asciiImg
+        outDict["damageType"] = CLASS_MAPPINGS[int(classes[0].item())]
+    return outDict
 
 def getStreetImages(point, radius):
     lat = point[0]
@@ -85,9 +102,9 @@ def query():
             if len(pred) > 0:
                 predictions.append(pred)
                 marker["location"] = image["location"]
-                marker["damageType"] = pred[0]["damageType"]
+                marker["damageType"] = pred["damageType"]
                 marker["dataSource"] = 1
-                marker["image"] = None
+                marker["image"] = pred["image"]
                 response["markers"].append(marker)
         with conn.cursor() as curr:
             curr.execute("select * from osmp_schema.damage_nodes where ST_DistanceSphere(location, ST_MakePoint(%15.10f, %15.10f)) <= %d" % (point[1], point[0], radius))
