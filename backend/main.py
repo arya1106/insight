@@ -13,7 +13,7 @@ import numpy as np
 
 CLASS_MAPPINGS={0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "pothole"}
 
-conn = psycopg2.connect(os.environ["DATABASE_URL"], dbname="OSMP")
+conn = psycopg2.connect("postgresql://aryamaan:eX6E-nNOlk7VFABQVVP1Dg@boilermake-insight-8301.7tt.cockroachlabs.cloud:26257", dbname="OSMP")
 
 app = Flask(__name__)
 CORS(app, resources={r"*": {"origins": "*"}})
@@ -77,7 +77,8 @@ def report():
             latitude = float(request.headers.get("latitude"))
             longitude = float(request.headers.get("longitude"))
             content = request.files.get("imageUploads").read()
-            print(type(content))
+            print("uploaded data")
+            print("added data to database")
             cmd = "insert into osmp_schema.damage_nodes values (%d, ST_SetSRID(ST_MakePoint(%15.10f, %15.10f), 4326), %d, 2, %s)" % (res, longitude, latitude, crack_type, content)
             curr.execute(cmd)
             conn.commit()
