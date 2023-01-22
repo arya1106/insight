@@ -19,7 +19,7 @@ def predict(imageSource):
     model = YOLO("../ML/train4/weights/best.pt")
     outList = []
 
-    results = model.predict(source=imageSource, save=True)
+    results = model.predict(source=imageSource, save=True, verbose=False)
     print(imageSource)
     if results:    
         boxCords = results[0].boxes.xyxy
@@ -41,10 +41,12 @@ def getStreetImages(point, radius):
     jsonDict = response.json()
 
     outList = []
-    for i in jsonDict['result']['data']:
-        data = {}
-        data["imageURL"] = i["fileurlLTh"]
-        data["location"] = [i["lat"], i["lng"]]
+    if "result" in jsonDict:
+        for i in jsonDict['result']['data']:
+            data = {}
+            data["imageURL"] = i["fileurlLTh"]
+            data["location"] = [i["lat"], i["lng"]]
+            outList.append(data)
 
     return outList
 
@@ -68,16 +70,40 @@ def report():
 @cross_origin()
 def query():
     if request.method == "POST":
-        jsonDict = request.json()
-        point = jsonDict["point"]
-        radius = jsonDict["radius"]
+        response = {}
+        response["markers"] = []
+        data = request.get_json()
+        point = data["location"]
+        point[0] = float(point[0])
+        point[1] = float(point[1])
+        radius = int(data["radius"])
         streetImages = getStreetImages(point, radius)
         predictions = []
         for image in streetImages:
-            predictions.append(predict(imageSource=image["imageURL"]))
-        
-        
-    return "hi"
+            marker = {}
+            pred = predict(imageSource=image["imageURL"])
+            if len(pred) > 0:
+                predictions.append(pred)
+                marker["location"] = image["location"]
+                marker["damageType"] = pred[0]["damageType"]
+                marker["dataSource"] = 1
+                marker["image"] = None
+                response["markers"].append(marker)
+        with conn.cursor() as curr:
+            curr.execute("select * from osmp_schema.damage_nodes where ST_DistanceSphere(location, ST_MakePoint(%15.10f, %15.10f)) <= %d" % (point[1], point[0], radius))
+            res = curr.fetchall() 
+            curr.execute("select ST_X(location), ST_Y(location) from osmp_schema.damage_nodes where ST_DistanceSphere(location, ST_MakePoint(%15.10f, %15.10f)) <= %d" % (point[1], point[0], radius))
+            location_res = curr.fetchall()
+            for i in range(len(res)):
+                marker = {}
+                marker["location"] = [location_res[i][1], location_res[i][0]]
+                marker["damageType"] = res[i][2]
+                marker["dataSource"] = 2
+                encoded = base64.b64encode(res[i][4].tobytes())
+                marker["image"] = encoded.decode('ascii')
+                response["markers"].append(marker)
+
+    return json.dumps(response, indent=2) 
 
 @app.route('/')
 def home():
