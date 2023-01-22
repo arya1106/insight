@@ -1102,14 +1102,21 @@ ul.location_icon li a {
 
 .popup-div {
 
-     max-width: 100%;
-     
+     width: 400px;
      
 }
 
 .popup-label {
      font-family: 'Poppins', sans-serif;
-     font-weight: 700;
+     font-weight: 600;
+     color: #000000;
+     float:left;
+     position: relative;
+}
+
+.popup-label-1 {
+     font-family: 'Poppins', sans-serif;
+     font-weight: 900;
      color: #000000;
      float:left;
      position: relative;
