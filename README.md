@@ -1,5 +1,9 @@
 # Insight
 
+<p align="center">
+[![Demo Video](https://img.youtube.com/vi/zqdhXTJrVrk/0.jpg)](https://youtu.be/zqdhXTJrVrk)
+</p>
+
 **Every time you stumble across a small crack in the road, that’s the beginning of something very dangerous.** They develop into potholes, causing damage to vehicles and fatal car accidents. It often takes years to fix these defects, leading to even more traffic, pollution, and new cracks forming. It's important to address these issues early to prevent a downward spiral. In fact, research has shown that approximately 1/3rd of traffic accidents involve poor road conditions. This, is what we aim to solve.
 
 **Introducing Insight**, a cutting-edge technology solution that uses machine learning to identify and map dangerous cracks on the road. Our mission is to make roads safer for drivers by providing them with real-time information about the condition of the roads they travel on.
@@ -11,6 +15,4 @@ On our website, users can select a region and see all the labeled & reported cra
 **Insight** is not only a tool for road safety, but it's also a tool for community engagement and citizen science. By encouraging people to report road defects, we are creating a sense of shared responsibility for road safety and empowering people to take action to improve the roads in their community. Of course, one may have concerns about uploading location data, but all reports are anonymous to protect users’ privacy.
 
 Insight has the potential to make a significant impact on road safety, and we are excited to continue developing and improving our technology.
-
-[![Demo Video](https://img.youtube.com/vi/zqdhXTJrVrk/0.jpg)](https://youtu.be/zqdhXTJrVrk)
 
