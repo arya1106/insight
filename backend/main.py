@@ -41,7 +41,7 @@ def predict(imageSource):
             x2 = boxCords[index][2]
             y2 = boxCords[index][3]
             imgAnnotated = cv2.rectangle(imgAnnotated, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-            imgAnnotated = cv2.putText(imgAnnotated, CLASS_MAPPINGS[int(classes[index].item())], (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,0), 2)
+            imgAnnotated = cv2.putText(imgAnnotated, CLASS_MAPPINGS[int(classes[index].item())], (int(x1), int(y1-10)), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0,255,0), 2)
         
         imgBytes = cv2.imencode('.jpg', imgAnnotated)[1].tobytes()
         encodedImg = base64.b64encode(imgBytes)
