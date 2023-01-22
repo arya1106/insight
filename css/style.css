@@ -103,8 +103,9 @@ body {
 
 .analyze_button {
      font-size: 24px;
-     background-color: #fff;
-     color: #393939;
+     background-color: #ffbd59;
+     color: #fff !important;
+     
      padding: 20px 90px;
      width: 100%;
      display: block;
@@ -114,11 +115,13 @@ body {
      font-weight: 500;
      border-radius: 50px;
      text-transform: uppercase;
+     cursor: pointer;
+
 }
 
 .analyze_button:hover {
-     background: #ffbd59;
-     color: #fff !important;
+     background: #fff;
+     color: #393939 !important;
      transition: ease-in all 0.2s;
 }
 
@@ -1065,3 +1068,49 @@ ul.location_icon li a {
      margin-bottom: 90px;
 }
 
+
+
+
+.loader {
+     border: 8px solid #f3f3f3; /* Light grey */
+     border-top: 8px solid #3498db; /* Blue */
+     border-radius: 50%;
+     width: 40px;
+     height: 40px;
+     animation: spin 2s linear infinite;
+     position: relative;
+     display: block;
+     float: right;
+     visibility: hidden;
+}
+
+@keyframes spin {
+     0% { transform: rotate(0deg); }
+     100% { transform: rotate(360deg); }
+}
+
+
+.coords-label {
+     padding-left: 5px;
+     font-family: 'Poppins', sans-serif;
+     font-weight: 250;
+     color: #fff;
+     opacity: 50%;
+     float:left;
+     position: relative;
+}
+
+.popup-div {
+
+     max-width: 100%;
+     
+     
+}
+
+.popup-label {
+     font-family: 'Poppins', sans-serif;
+     font-weight: 700;
+     color: #000000;
+     float:left;
+     position: relative;
+}

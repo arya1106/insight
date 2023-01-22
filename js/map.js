@@ -3,7 +3,7 @@ var longitude = 0;
 var latitude = 0;
 
 //init map
-var map = L.map('map').setView([40.4259, -86.9081], 14);
+var map = L.map('map').setView([37.3861, -122.0839], 14);
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -18,41 +18,11 @@ map.on('click', function(e){
         map.removeLayer(marker);
     }
     marker = new L.marker(e.latlng).addTo(map);
+    marker._icon.style.filter = "hue-rotate(170deg)";
     getAddress(e);
     adjustRadius();
 });
 
-
-//TEST ARRAY BELOW
-var markers = [
-    [ 37.3861, -122.0739, "Big Ben" ],
-    [ 37.3838, -122.0835, "London Eye" ],
-    [ 37.3859, -122.0942, "Nelson's Column<br><a href=\"https://en.wikipedia.org/wiki/Nelson's_Column\">wp</a>" ] 
- ];
-
-function createMarkers() {
-    //Loop through the markers array
-    for (var i = 0; i < markers.length; i++) {
-      
-       var lat = markers[i][0];
-       var lon = markers[i][1];
-       var popupText = markers[i][2];
-       
-       var markerLocation = new L.LatLng(lat, lon);
-       var newmarker = new L.marker(markerLocation).bindPopup('');
-       map.addLayer(newmarker);
-    
-       newmarker.on('mouseover', function(e) {
-           var popup = e.target.getPopup();
-           popup.setContent("<div><p>hello bitch</p><img src='images/insight_logo.png' width='100' height='100'></div>");
-           e.target.bindPopup(popup).openPopup();
-       });
-
-       newmarker.on('mouseout', function(e) {
-           e.target.closePopup();
-       });
-    }
-}
 
 //geocode address from click
 function getAddress(e) {
@@ -61,6 +31,8 @@ function getAddress(e) {
     var loc = e.latlng.toString();
     latitude = loc.split(",")[0].split("(")[1];
     longitude = loc.split(",")[1].split(")")[0];
+
+    document.getElementById("coords-label").textContent = latitude + ", " + longitude;
  
     var api_url = 'https://api.opencagedata.com/geocode/v1/json'
  
@@ -123,29 +95,29 @@ function adjustRadius() {
         circle = L.circle([latitude, longitude], {
             color: 'red',
             fillColor: '#f03',
-            fillOpacity: 0.5,
+            fillOpacity: 0.25,
             radius: radius
         }).addTo(map);
     }
 }
 
-function markerOnclick(marker, url) {
-    var popup = marker.target.getPopup();
-    popup.setContent(`
-    <div>
-        <p>hello bitch</p>
-        <img src='${url}' width='100' height='100'>
-    </div>
-    `);
-    marker.target.bindPopup(popup).openPopup();
-}
 
 // submit Location
 function submitLocation() {
+
+    if(radius === "" || (latitude === 0 && longitude === 0)) {
+        alert("Enter a valid input!");
+        return;
+    }
+
+    document.getElementById("loader").style.visibility = "visible";
+
     var outJson = {
         "location": [latitude, longitude],
         "radius": radius
     }
+
+    var markergroup = L.markerClusterGroup();
 
     fetch('http://138.197.104.208:5000/query', {
         method: 'POST',
@@ -155,11 +127,34 @@ function submitLocation() {
         },
         body: JSON.stringify(outJson)
     }).then(response => response.json()).then(response => {
+
+        document.getElementById("loader").style.visibility = "hidden";
+
         for(var i = 0; i < response["markers"].length; i++) {
             (function () {
                 var lat = response["markers"][i]["location"][0];
                 var lon = response["markers"][i]["location"][1];
+                var damageType = response["markers"][i]["damageType"];
                 var imageString = response["markers"][i]["image"];
+
+                //{0: "long_crack", 1: "trans_crack", 2: "aligator_crack", 3: "pothole"}
+                var damageTypeString = "";
+                switch(damageType) {
+                    case 0:
+                        damageTypeString = "Longitudinal Crack";
+                        break;
+                    case 1:
+                        damageTypeString = "Transverse Crack";
+                        break;
+                    case 2:
+                        damageTypeString = "Alligator Crack";
+                        break;
+                    case 3:
+                        damageTypeString = "Pothole";
+                        break;
+                    default:
+                        damageTypeString = damageType;
+                }
                 
                 var markerLocation = new L.LatLng(lat, lon);
                 var newmarker = new L.marker(markerLocation).bindPopup('');
@@ -179,18 +174,25 @@ function submitLocation() {
                     
                     var popup = e.target.getPopup();
                     popup.setContent(`
-                    <div>
-                        <p>hello bitch</p>
-                        <img src='${url}' width='100' height='100'>
+                    <div class='popup-div'>
+                        <p class="popup-label">${damageTypeString}</p>
+                        <img src='${url}'>
                     </div>
                     `);
-                    e.target.bindPopup(popup).openPopup();
+                    e.target.bindPopup(popup, {maxWidth : "auto", position : "relative"}).openPopup();
                 });
                 newmarker.on('mouseout', function(e) {
                     e.target.closePopup();
                 });
-                map.addLayer(newmarker);
+                //map.addLayer(newmarker);
+                markergroup.addLayer(newmarker);
+                // if (response["markers"][i]["dataSource"] == 1) {
+                //     newmarker._icon.style.filter = "hue-rotate(270deg)";
+                // }
             }());
         }
+        map.addLayer(markergroup);
     });
+
+
 }
