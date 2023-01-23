@@ -1,0 +1,4 @@
+outs:
+- md5: ce97f21307a957e1785201beeb9bc832
+  size: 114
+  path: yolo_format.yaml
